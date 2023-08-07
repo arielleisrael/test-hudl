@@ -38,13 +38,13 @@ node tests/login.js
 ## Takeaways & Optimization
 During the development of this test suite, I identified some areas for code optimization:
 
-1. Organize the Tests
+### 1. Organize the Tests
 Utilizing test frameworks like Mocha would allow for additional test organization (such as adding before and after hooks). This would provide the ability to set up the test environment before each test case and perform cleanup afterward.
 
-2. Remove Hardcoded Wait Times
+### 2. Remove Hardcoded Wait Times
 To improve efficiency, hardcoded wait times could be replaced with explicit waits. For example, using explicit waits, such as await driver.wait(), will ensure that the tests wait only as long as necessary for specific elements to be available.
 
-3. Refactor Repeated Code
+### 3. Refactor Repeated Code
 The test code could be improved for better maintainability by creating more reusable functions, ultimately reducing code duplication.
 
   
