@@ -6,8 +6,10 @@ const testData = require('./testData.js');
 function testLoginFlows() {
     let validEmail = testData.validEmail;
     let validPwd = testData.validPwd;
-    let invalidEmail = testData.invalidEmail;
-    let invalidPwd = testData.invalidPwd;
+    let invalidEmail1 = testData.invalidEmail1;
+    let invalidPwd1 = testData.invalidPwd1;
+    let invalidEmail2 = testData.invalidEmail2;
+    let invalidPwd2 = testData.invalidPwd2;
     
     // Test Valid Email & Valid Password
     testLogin(validEmail,validPwd,"valid");
@@ -22,10 +24,16 @@ function testLoginFlows() {
     testLogin(validEmail,"","missing");
 
     // Test Invalid Email
-    testLogin(invalidEmail,validPwd,"invalid");
+    testLogin(invalidEmail1,validPwd,"invalid");
 
     // Test Invalid Password
-    testLogin(validEmail,invalidPwd,"invalid");
+    testLogin(validEmail,invalidPwd1,"invalid");
+
+    // Test Invalid Email
+    testLogin(invalidEmail2,validPwd,"invalid");
+
+    // Test Invalid Password
+    testLogin(validEmail,invalidPwd2,"invalid");
 }
 
 async function testLogin(email, pwd, testType){
@@ -51,7 +59,7 @@ async function testLogin(email, pwd, testType){
 
     let loginForm = await driver.findElement(By.className("login-box"));
 
-    assert(loginForm.isDisplayed, "Log In Page did NOT display.");
+    assert(loginForm.isDisplayed, "Hudl Log In Page did NOT display.");
 
     // Input email address
     let emailInput = await driver.findElement(By.id("email"));
@@ -74,7 +82,7 @@ async function testLogin(email, pwd, testType){
 
             // Check for Error message
             assert.strictEqual(reqErrorText, "Please fill in all of the required fields");
-            console.log("** TEST PASSED: Error message displayed for MISSING FIELD(S)");
+            console.log("** TEST PASSED: Error message displayed for MISSING email and/or password value(s)");
             break;
         }    
         case "invalid": {   // TEST INVALID EMAIL OR PASSWORD
@@ -82,7 +90,7 @@ async function testLogin(email, pwd, testType){
 
              // Check for Error message
              assert.strictEqual(invalidErrorText, "We don't recognize that email and/or password");
-            console.log("** TEST PASSED: Error message displayed for INVALID VALUE(S)");
+            console.log("** TEST PASSED: Error message displayed for INVALID email and/or password value(s)");
             break;
         }    
         case "valid": {    // TEST VALID EMAIL & VALID PASSWORD
@@ -90,19 +98,15 @@ async function testLogin(email, pwd, testType){
             // Verify that the Hudl Fan Page successfully displays
             let fanHomePage = await driver.findElement(By.css("[data-qa-id='fan-home-page']"));
             assert(fanHomePage.isDisplayed, "Hudl Fan Home Page did NOT display");
-            console.log("** TEST PASSED: Hudl Fan Home Page displays successfully for VALID EMAIL AND PASSWORD.");
-
-            // Wait for Hudl Fan Page to finish loading
-            await driver.sleep(3000);
+            console.log("** TEST PASSED: Hudl Fan Home Page displays successfully for VALID EMAIL and PASSWORD.");
 
             // Log Out of Hudl Fan Page
-            let menuDropDwn = await driver.findElement(By.className("fanWebnav_globalUserItemDisplayName__QgQU2"));
+            let menuDropDwn = await driver.wait(until.elementLocated(By.className("fanWebnav_globalUserItemDisplayName__QgQU2")), 5000);
+            await driver.wait(until.elementIsEnabled(menuDropDwn), 5000);
             menuDropDwn.click();
 
-            // Wait for dropdown to expand
-            await driver.sleep(3000);
-
-            let logOutBtn = await driver.findElement(By.css("[data-qa-id='hui-logout']"));
+            let logOutBtn = await driver.wait(until.elementLocated(By.css("[data-qa-id='hui-logout']")), 5000);
+            await driver.wait(until.elementIsEnabled(logOutBtn), 5000);  // Wait for dropdown to expand
             logOutBtn.click();
             break;
         }
